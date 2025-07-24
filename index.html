@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Manager</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css" />
+
+</head>
+
+<body>
+    <h1 class="tasks-header mb-3">Tasks</h1>
+    <button class="task-add" data-bs-toggle="modal" data-bs-target="#addModal"> + Add New Task</button>
+
+    <div id="tasks"></div>
+
+    <!--Add Modal-->
+    <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addModalLabel">Add A New Task</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Name</label>
+                        <input type="text" class="form-control" id="name">
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Descreption</label>
+                        <input type="text" class="form-control" id="description">
+                    </div>
+                    <div class="mb-3">
+                        <label for="deadline" class="form-label">Deadline</label>
+                        <input type="date" class="form-control" id="deadline">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" id="add">Add</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--Delete Modal-->
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Are you sure you want to delete this?</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Bezárás"></button>
+                </div>
+                <div class="modal-body">
+                    <button type="button" class="btn-yes" id="yes">Yes</button>
+                    <button type="button" class="btn-no" id="no" data-bs-dismiss="modal">No</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="js/main.js"></script>
+
+</html>
