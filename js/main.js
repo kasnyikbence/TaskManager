@@ -1,9 +1,12 @@
 let $tasks = $('#tasks');
+let $toDelete = null;
 
 $(document).ready(function () {
+    renderTasks();
+
     $('#add').on('click', function () {
         const name = $('#name').val().trim();
-        const description = $('#description ').val().trim();
+        const description = $('#description').val().trim();
         const deadline = $('#deadline').val();
 
         if (!name || !description || !deadline) {
@@ -11,63 +14,84 @@ $(document).ready(function () {
             return;
         }
 
-        const tasks = `<div class="task-card">
-        <div class="task-header">
-            <span class="task-title">${name}</span>
-            <div class="task-status-group">
-                <span class="task-status not-done">❌ Not Done</span>
-            </div>
-        </div>
+        const newTask = {
+            name,
+            description,
+            deadline,
+            done: false
+        };
 
-        <div class="task-body">
-            <p class="description">${description}</p>
-            <p class="task-deadline"> Deadline: ${deadline}</p>
-        </div>
+        const tasks = loadTasks();
+        tasks.push(newTask);
+        saveTasks(tasks);
+        renderTasks();
 
-        <div class="task-actions">
-            <button type="button" class="btn-done">✔ Mark as done</button>
-            <button type="button" class="btn-delete" data-bs-toggle="modal" data-bs-target="#deleteModal">
-            <img src="assets/bin.png" width="20" height="20" alt="Delete">
-            </button>
-        </div>
-    </div>
-    `;
-
-        $('#tasks').append(tasks);
         $('#name, #description, #deadline').val('');
-        const addModal = bootstrap.Modal.getInstance(document.getElementById('addModal'));
-        addModal.hide();
-    })
+        bootstrap.Modal.getInstance(document.getElementById('addModal')).hide();
+    });
 
     $tasks.on('click', '.btn-done', function () {
-        const $taskCard = $(this).closest('.task-card');
-        const $status = $taskCard.find('.task-status');
-        const $button = $(this);
-
-        if ($status.hasClass('not-done')) {
-            $status
-                .removeClass('not-done')
-                .addClass('done')
-                .text('✔ Done')
-            $button.hide();
-        } else {
-            $status
-                .removeClass('done')
-                .addClass('not-done')
-        }
+        const index = $(this).closest('.task-card').data('index');
+        const tasks = loadTasks();
+        tasks[index].done = true;
+        saveTasks(tasks);
+        renderTasks();
     });
 
-    $tasks.on('click', '.btn-delete', function(){
-        $toDelete = $(this).closest('.task-card');
+    $tasks.on('click', '.btn-delete', function () {
+        const index = $(this).closest('.task-card').data('index');
+        $toDelete = index; // csak az indexet mentjük
     });
-    
-    $('.btn-yes').on('click', function(){
-        if($toDelete){
-            $toDelete.remove();
+
+    $('.btn-yes').on('click', function () {
+        if ($toDelete !== null) {
+            const tasks = loadTasks();
+            tasks.splice($toDelete, 1);
+            saveTasks(tasks);
+            renderTasks();
             $toDelete = null;
-            const deleteModal = bootstrap.Modal.getInstance(document.getElementById('deleteModal'));
-            deleteModal.hide();
+            bootstrap.Modal.getInstance(document.getElementById('deleteModal')).hide();
         }
     });
+});
 
-})
+
+function loadTasks() {
+    const tasksJson = localStorage.getItem('tasks');
+    return tasksJson ? JSON.parse(tasksJson) : [];
+}
+
+function saveTasks(tasks) {
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+}
+
+function renderTasks() {
+    const tasks = loadTasks();
+    $tasks.empty();
+
+    tasks.forEach((task, index) => {
+        const taskHtml = `
+            <div class="task-card" data-index="${index}">
+                <div class="task-header">
+                    <span class="task-title">${task.name}</span>
+                    <div class="task-status-group">
+                        <span class="task-status ${task.done ? 'done' : 'not-done'}">
+                            ${task.done ? '✔ Done' : '❌ Not Done'}
+                        </span>
+                    </div>
+                </div>
+                <div class="task-body">
+                    <p class="description">${task.description}</p>
+                    <p class="task-deadline">Deadline: ${task.deadline}</p>
+                </div>
+                <div class="task-actions">
+                    ${!task.done ? '<button type="button" class="btn-done">✔ Mark as done</button>' : ''}
+                    <button type="button" class="btn-delete" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                        <img src="assets/bin.png" width="20" height="20" alt="Delete">
+                    </button>
+                </div>
+            </div>
+        `;
+        $tasks.append(taskHtml);
+    });
+}
