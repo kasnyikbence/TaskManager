@@ -84,7 +84,6 @@
 
 <script>
   const toggleDark = document.getElementById('toggleDark');
-  const darkIcon = toggleDark.querySelector('img');
 
   toggleDark.addEventListener('click', function () {
     document.body.classList.toggle('dark-mode');
@@ -96,7 +95,6 @@
     const isDark = localStorage.getItem('dark-mode') === 'true';
     if (isDark) {
       document.body.classList.add('dark-mode');
-      darkIcon.src = 'assets/dark-mode.png';
     }
   });
 </script>
