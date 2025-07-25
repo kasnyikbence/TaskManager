@@ -3,11 +3,6 @@ body {
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
 
-body.dark-mode {
-    background-color: #121212;
-    color: #e4e4e4;
-}
-
 .navbar {
     background-color: #292929;
     transition: background-color 0.3s;
@@ -23,7 +18,7 @@ body.dark-mode {
 }
 
 .task-add {
-    background-color: #5d4596;
+    background-color: #456596;
     color: #fcf8ec;
     border: none;
     padding: 8px 24px;
@@ -35,10 +30,11 @@ body.dark-mode {
 }
 
 .task-add:hover {
-    background-color: #8970c2;
+    background-color: #7094c2;
 }
 
 #taskSearch {
+    background-color: #fcf8ec;
     max-width: 300px;
     width: 100%;
 }
@@ -47,12 +43,13 @@ body.dark-mode {
     border: none;
     border-radius: 16px;
     transition: transform 0.2s ease, filter 0.2s ease;
+    filter: invert(100%);
 }
 
 .btn-darkmode:hover {
-    transform: scale(1.1);
-    filter: brightness(120%);
+    transform: scale(1.15);
     cursor: pointer;
+    filter: invert(100%);
 }
 
 
@@ -60,7 +57,7 @@ body.dark-mode {
 .task-card {
     background-color: #fff;
     border-radius: 16px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
     padding: 20px;
     margin: 24px;
     max-width: 500px;
@@ -69,7 +66,7 @@ body.dark-mode {
 
 .task-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
 }
 
 .task-header {
@@ -83,6 +80,21 @@ body.dark-mode {
     font-size: 1.5rem;
     font-weight: bold;
     color: #333;
+}
+
+.btn-pen {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 40%;
+    transition: background-color 0.2s ease;
+}
+
+.btn-pen:hover {
+    transform: scale(1.2);
+    cursor: pointer;
+
 }
 
 .task-status-group {
@@ -111,7 +123,7 @@ body.dark-mode {
     margin-bottom: 16px;
 }
 
-.description {
+.task-description {
     margin: 0;
     font-size: 1rem;
     color: #555;
@@ -149,12 +161,13 @@ body.dark-mode {
     border: none;
     cursor: pointer;
     padding: 6px;
-    border-radius: 50%;
+    border-radius: 40%;
     transition: background-color 0.2s ease;
 }
 
 .btn-delete:hover {
-    background-color: rgba(220, 53, 69, 0.1);
+    transform: scale(1.2);
+    cursor: pointer;
 }
 
 .btn-yes {
@@ -185,4 +198,54 @@ body.dark-mode {
 
 .btn-no:hover {
     background-color: #882121;
+}
+
+
+/*DARKMODE*/
+body.dark-mode {
+    background-color: #121212;
+    color: #e4e4e4;
+}
+
+body.dark-mode .modal-content {
+    background-color: #212529;
+    color: #f8f9fa;
+}
+
+body.dark-mode .modal-header,
+body.dark-mode .modal-body,
+body.dark-mode .modal-footer {
+    background-color: #212529;
+    color: #f8f9fa;
+    border-color: #343a40;
+}
+
+body.dark-mode .form-control {
+    background-color: #343a40;
+    color: #f8f9fa;
+    border: 1px solid #495057;
+}
+
+
+body.dark-mode .form-label {
+    color: #f8f9fa;
+}
+
+body.dark-mode .btn-close {
+    filter: invert(1);
+}
+
+body.dark-mode .task-card,
+body.dark-mode .task-header,
+body.dark-mode .task-title, 
+body.dark-mode .task-description,
+body.dark-mode .task-deadline{
+    background-color: #212529;
+    color: #f8f9fa;
+    border-color: #343a40;
+}
+
+body.dark-mode .btn-pen,
+body.dark-mode .btn-delete{
+    filter: invert(100%);
 }

@@ -18,7 +18,6 @@ $(document).ready(function () {
             name,
             description,
             deadline,
-            done: false
         };
 
         const tasks = loadTasks();
@@ -30,6 +29,41 @@ $(document).ready(function () {
         bootstrap.Modal.getInstance(document.getElementById('addModal')).hide();
     });
 
+    let $editIndex = null;
+    $tasks.on('click', '.btn-edit', function () {
+        const index = $(this).data('index');
+        const tasks = loadTasks();
+        const task = tasks[index];
+
+        $('#new-name').val(task.name);
+        $('#new-description').val(task.description);
+        $('#new-deadline').val(task.deadline);
+
+        $editIndex = index;
+    });
+
+    $('#edit').on('click', function () {
+        const name = $('#new-name').val().trim();
+        const description = $('#new-description').val().trim();
+        const deadline = $('#new-deadline').val();
+
+
+        const tasks = loadTasks();
+        tasks[$editIndex] = {
+            ...tasks[$editIndex],
+            name,
+            description,
+            deadline
+        };
+        saveTasks(tasks);
+        renderTasks();
+
+        // Modal bezárása
+        bootstrap.Modal.getInstance(document.getElementById('editModal')).hide();
+    });
+
+
+
     $tasks.on('click', '.btn-done', function () {
         const index = $(this).closest('.task-card').data('index');
         const tasks = loadTasks();
@@ -40,7 +74,7 @@ $(document).ready(function () {
 
     $tasks.on('click', '.btn-delete', function () {
         const index = $(this).closest('.task-card').data('index');
-        $toDelete = index; // csak az indexet mentjük
+        $toDelete = index;
     });
 
     $('.btn-yes').on('click', function () {
@@ -53,6 +87,8 @@ $(document).ready(function () {
             bootstrap.Modal.getInstance(document.getElementById('deleteModal')).hide();
         }
     });
+
+
 });
 
 
@@ -74,6 +110,9 @@ function renderTasks() {
             <div class="task-card" data-index="${index}">
                 <div class="task-header">
                     <span class="task-title">${task.name}</span>
+                    <button class="btn-pen btn-edit" data-index="${index}" data-bs-toggle="modal" data-bs-target="#editModal">
+                        <img src="assets/pen.png" alt="Edit" width="20" height="20">
+                    </button>
                     <div class="task-status-group">
                         <span class="task-status ${task.done ? 'done' : 'not-done'}">
                             ${task.done ? '✔ Done' : '❌ Not Done'}
@@ -81,7 +120,7 @@ function renderTasks() {
                     </div>
                 </div>
                 <div class="task-body">
-                    <p class="description">${task.description}</p>
+                    <p class="task-description">${task.description}</p>
                     <p class="task-deadline">Deadline: ${task.deadline}</p>
                 </div>
                 <div class="task-actions">
@@ -95,3 +134,18 @@ function renderTasks() {
         $tasks.append(taskHtml);
     });
 }
+
+const toggleDark = document.getElementById('toggleDark');
+
+toggleDark.addEventListener('click', function () {
+    document.body.classList.toggle('dark-mode');
+
+    localStorage.setItem('dark-mode', document.body.classList.contains('dark-mode'));
+});
+
+window.addEventListener('DOMContentLoaded', () => {
+    const isDark = localStorage.getItem('dark-mode') === 'true';
+    if (isDark) {
+        document.body.classList.add('dark-mode');
+    }
+});
