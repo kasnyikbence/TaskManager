@@ -1,6 +1,23 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
 body {
-    background-color: #fcf8ec;
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: url("../assets/background-img.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  z-index: -1;
+  transition: filter 0.3s ease;
 }
 
 .navbar {
@@ -51,8 +68,6 @@ body {
     cursor: pointer;
     filter: invert(100%);
 }
-
-
 
 .task-card {
     background-color: #fff;
@@ -202,8 +217,8 @@ body {
 
 
 /*DARKMODE*/
-body.dark-mode {
-    background-color: #121212;
+body.dark-mode::before {
+  filter: invert(1);
     color: #e4e4e4;
 }
 
@@ -231,21 +246,18 @@ body.dark-mode .form-label {
     color: #f8f9fa;
 }
 
-body.dark-mode .btn-close {
-    filter: invert(1);
-}
 
 body.dark-mode .task-card,
 body.dark-mode .task-header,
-body.dark-mode .task-title, 
+body.dark-mode .task-title,
 body.dark-mode .task-description,
-body.dark-mode .task-deadline{
+body.dark-mode .task-deadline {
     background-color: #212529;
     color: #f8f9fa;
     border-color: #343a40;
 }
 
 body.dark-mode .btn-pen,
-body.dark-mode .btn-delete{
+body.dark-mode .btn-delete {
     filter: invert(100%);
 }
