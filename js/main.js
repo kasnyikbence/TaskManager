@@ -64,16 +64,16 @@ $(document).ready(function () {
 
 
 
-    $tasks.on('click', '.btn-done', function () {
-        const index = $(this).closest('.task-card').data('index');
+    $tasks.on('change', '.form-check-input', function () {
+        const index = $(this).closest('.list-group-item').data('index');
         const tasks = loadTasks();
-        tasks[index].done = true;
+        tasks[index].done = this.checked;
         saveTasks(tasks);
         renderTasks();
     });
 
     $tasks.on('click', '.btn-delete', function () {
-        const index = $(this).closest('.task-card').data('index');
+        const index = $(this).closest('.list-group-item').data('index');
         $toDelete = index;
     });
 
@@ -106,30 +106,56 @@ function renderTasks() {
     $tasks.empty();
 
     tasks.forEach((task, index) => {
+        /*     const taskHtml = `
+                 <div class="task-card" data-index="${index}">
+                     <div class="task-header">
+                         <span class="task-title">${task.name}</span>
+                         <button class="btn-pen btn-edit" data-index="${index}" data-bs-toggle="modal" data-bs-target="#editModal">
+                             <img src="assets/pen.png" alt="Edit" width="20" height="20">
+                         </button>
+                         <div class="task-status-group">
+                             <span class="task-status ${task.done ? 'done' : 'not-done'}">
+                                 ${task.done ? '✔ Done' : '❌ Not Done'}
+                             </span>
+                         </div>
+                     </div>
+                     <div class="task-body">
+                         <p class="task-description">${task.description}</p>
+                         <p class="task-deadline">Deadline: ${task.deadline}</p>
+                     </div>
+                     <div class="task-actions">
+                         ${!task.done ? '<button type="button" class="btn-done">✔ Mark as done</button>' : ''}
+                         <button type="button" class="btn-delete" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                             <img src="assets/bin.png" width="20" height="20" alt="Delete">
+                         </button>
+                     </div>
+                 </div>
+             `;
+             */
         const taskHtml = `
-            <div class="task-card" data-index="${index}">
-                <div class="task-header">
+            <div class="list-group-item d-flex justify-content-between align-items-center bg-white text-dark border-secondary mb-2" data-index="${index}">
+                <div class="d-flex align-items-center">
+                    <input class="form-check-input me-3" type="checkbox" ${task.done ? 'checked' : ''} data-index="${index}">
+                <div class="d-flex flex-column">
                     <span class="task-title">${task.name}</span>
-                    <button class="btn-pen btn-edit" data-index="${index}" data-bs-toggle="modal" data-bs-target="#editModal">
-                        <img src="assets/pen.png" alt="Edit" width="20" height="20">
-                    </button>
                     <div class="task-status-group">
                         <span class="task-status ${task.done ? 'done' : 'not-done'}">
                             ${task.done ? '✔ Done' : '❌ Not Done'}
                         </span>
                     </div>
-                </div>
-                <div class="task-body">
-                    <p class="task-description">${task.description}</p>
-                    <p class="task-deadline">Deadline: ${task.deadline}</p>
-                </div>
-                <div class="task-actions">
-                    ${!task.done ? '<button type="button" class="btn-done">✔ Mark as done</button>' : ''}
-                    <button type="button" class="btn-delete" data-bs-toggle="modal" data-bs-target="#deleteModal">
-                        <img src="assets/bin.png" width="20" height="20" alt="Delete">
-                    </button>
+                    <small class="task-description">${task.description}</small>
+                    <small class="task-deadline">Due: ${task.deadline}</small>
                 </div>
             </div>
+            <div>
+                <a href="#" class="btn-edit text-dark me-3" data-index="${index}" data-bs-toggle="modal" data-bs-target="#editModal">
+                    <i class="fas fa-edit"></i>
+                </a>
+                <a href="#" class="btn-delete text-danger" data-index="${index}" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                    <i class="fas fa-trash-alt"></i>
+                </a>
+            </div>
+        </div>
         `;
         $tasks.append(taskHtml);
     });
