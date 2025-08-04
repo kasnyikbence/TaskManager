@@ -29,37 +29,37 @@
         </div>
     </nav>
 -->
-    
-<div class="d-flex" id="wrapper">
-    <div class="bg-white text-dark p-3" id="sidebar-wrapper">
-        <div class="sidebar-heading fs-4 fw-bold mb-4">Task Manager
-        <button class="btn btn-darkmode ms-2 p-2" id="toggleDark" aria-label="Toggle Dark Mode">
-            <img src="assets/dark-mode.png" alt="Dark Mode" width="30" height="30">
-        </button>
-        </div>
-        <div class="list-group list-group-flush">
-            <a href="#" class="list-group-item list-group-item-action bg-white text-dark  active" data-filter="all">
-                <i class="fas fa-tasks me-3"></i> All Tasks
-            </a>
-            <a href="#" class="list-group-item list-group-item-action bg-white text-dark" data-filter="completed">
-                <i class="fas fa-check-circle me-3"></i> Completed
-            </a>
-            <a href="#" class="list-group-item list-group-item-action bg-white text-dark" data-filter="pending">
-                <i class="fas fa-clock me-3"></i> Pending
-            </a>
-        </div>
-        <button class="btn btn-add w-100 mt-4" data-bs-toggle="modal" data-bs-target="#addModal">
-            Add Task
-        </button>
-    </div>
-    <div id="page-content-wrapper">
-        <div class="container-fluid">
-            <h2 class="mt-4 mb-4">All Tasks</h2>
-            <div id="tasks"></div>
-        </div>
-    </div>
-    </div>
 
+    <div class="d-flex" id="wrapper">
+        <div class="bg-white text-dark p-3 d-flex flex-column" id="sidebar-wrapper">
+            <div class="sidebar-heading fs-4 fw-bold mb-4">Task Manager
+                <button class="btn btn-darkmode ms-2 p-2" id="toggleDark" aria-label="Toggle Dark Mode">
+                    <img src="assets/moon.png" alt="Dark Mode" class="dark-mode-icon" width="30" height="30">
+                    <img src="assets/sun.png" alt="Light Mode" class="light-mode-icon d-none" width="30" height="30">
+                </button>
+            </div>
+            <div class="list-group list-group-flush flex-grow-1">
+                <a href="#" class="list-group-item list-group-item-action bg-white text-dark  active" data-filter="all">
+                    <i class="fas fa-tasks me-3"></i> All Tasks
+                </a>
+                <a href="#" class="list-group-item list-group-item-action bg-white text-dark" data-filter="completed">
+                    <i class="fas fa-check-circle me-3"></i> Completed
+                </a>
+                <a href="#" class="list-group-item list-group-item-action bg-white text-dark" data-filter="pending">
+                    <i class="fas fa-clock me-3"></i> Pending
+                </a>
+            </div>
+            <button class="btn btn-add w-100 mt-4" data-bs-toggle="modal" data-bs-target="#addModal">
+                <i class="fas fa-plus"></i> Add Task
+            </button>
+        </div>
+        <div id="page-content-wrapper">
+            <div class="container-fluid">
+                <h2 class="mt-4 mb-4">All Tasks</h2>
+                <div id="tasks"></div>
+            </div>
+        </div>
+    </div>
     <div id="tasks"></div>
 
     <!--Add Modal-->
@@ -135,7 +135,7 @@
             </div>
         </div>
     </div>
-    
+
 </body>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

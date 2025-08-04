@@ -1,9 +1,22 @@
 let $tasks = $('#tasks');
-let $toDelete = null;
+let $toDeleteId = null; // A törlendő feladat ID-ját tárolja
+let $editId = null; // A szerkesztendő feladat ID-ját tárolja
+let currentFilter = 'all';
 
 $(document).ready(function () {
-    renderTasks();
+    renderTasks(currentFilter);
+    setActiveFilter(currentFilter);
 
+    // Filter gombok eseménykezelője
+    $('.list-group-item-action').on('click', function (e) {
+        e.preventDefault();
+        const filterType = $(this).data('filter');
+        currentFilter = filterType;
+        setActiveFilter(filterType);
+        renderTasks(currentFilter);
+    });
+
+    // Feladat hozzáadása
     $('#add').on('click', function () {
         const name = $('#name').val().trim();
         const description = $('#description').val().trim();
@@ -14,83 +27,119 @@ $(document).ready(function () {
             return;
         }
 
+        const tasks = loadTasks();
         const newTask = {
+            id: Date.now(), // Egyedi azonosító hozzáadása
             name,
             description,
             deadline,
+            done: false
         };
-
-        const tasks = loadTasks();
         tasks.push(newTask);
         saveTasks(tasks);
-        renderTasks();
+        renderTasks(currentFilter);
 
         $('#name, #description, #deadline').val('');
         bootstrap.Modal.getInstance(document.getElementById('addModal')).hide();
     });
 
-    let $editIndex = null;
+    // Szerkesztés gomb kattintása
     $tasks.on('click', '.btn-edit', function () {
-        const index = $(this).data('index');
+        $editId = $(this).closest('.list-group-item').data('id');
         const tasks = loadTasks();
-        const task = tasks[index];
+        const taskToEdit = tasks.find(task => task.id === $editId);
 
-        $('#new-name').val(task.name);
-        $('#new-description').val(task.description);
-        $('#new-deadline').val(task.deadline);
-
-        $editIndex = index;
+        if (taskToEdit) {
+            $('#new-name').val(taskToEdit.name);
+            $('#new-description').val(taskToEdit.description);
+            $('#new-deadline').val(taskToEdit.deadline);
+        }
     });
 
+    // Szerkesztés mentése
     $('#edit').on('click', function () {
         const name = $('#new-name').val().trim();
         const description = $('#new-description').val().trim();
         const deadline = $('#new-deadline').val();
 
-
         const tasks = loadTasks();
-        tasks[$editIndex] = {
-            ...tasks[$editIndex],
-            name,
-            description,
-            deadline
-        };
-        saveTasks(tasks);
-        renderTasks();
+        const taskIndex = tasks.findIndex(task => task.id === $editId);
 
-        // Modal bezárása
-        bootstrap.Modal.getInstance(document.getElementById('editModal')).hide();
-    });
-
-
-
-    $tasks.on('change', '.form-check-input', function () {
-        const index = $(this).closest('.list-group-item').data('index');
-        const tasks = loadTasks();
-        tasks[index].done = this.checked;
-        saveTasks(tasks);
-        renderTasks();
-    });
-
-    $tasks.on('click', '.btn-delete', function () {
-        const index = $(this).closest('.list-group-item').data('index');
-        $toDelete = index;
-    });
-
-    $('.btn-yes').on('click', function () {
-        if ($toDelete !== null) {
-            const tasks = loadTasks();
-            tasks.splice($toDelete, 1);
+        if (taskIndex !== -1) {
+            tasks[taskIndex] = {
+                ...tasks[taskIndex],
+                name,
+                description,
+                deadline
+            };
             saveTasks(tasks);
-            renderTasks();
-            $toDelete = null;
-            bootstrap.Modal.getInstance(document.getElementById('deleteModal')).hide();
+            renderTasks(currentFilter);
+            bootstrap.Modal.getInstance(document.getElementById('editModal')).hide();
         }
     });
 
+    // Checkbox eseménykezelő
+    $tasks.on('change', '.form-check-input', function () {
+        const taskId = $(this).closest('.list-group-item').data('id');
+        const tasks = loadTasks();
+        const taskToUpdate = tasks.find(task => task.id === taskId);
 
+        if (taskToUpdate) {
+            taskToUpdate.done = this.checked;
+            saveTasks(tasks);
+            renderTasks(currentFilter); // A szűrővel frissít
+        }
+    });
+
+    // Törlés gomb kattintása
+    $tasks.on('click', '.btn-delete', function () {
+        $toDeleteId = $(this).closest('.list-group-item').data('id');
+    });
+
+    // Törlés megerősítése (Yes)
+    $('.btn-yes').on('click', function () {
+        if ($toDeleteId !== null) {
+            const tasks = loadTasks();
+            const indexToDelete = tasks.findIndex(task => task.id === $toDeleteId);
+
+            if (indexToDelete !== -1) {
+                tasks.splice(indexToDelete, 1);
+                saveTasks(tasks);
+                renderTasks(currentFilter);
+                $toDeleteId = null;
+                bootstrap.Modal.getInstance(document.getElementById('deleteModal')).hide();
+            }
+        }
+    });
+
+    // Dark Mode váltása
+    const toggleDark = document.getElementById('toggleDark');
+    const lightIcon = document.querySelector('.light-mode-icon');
+    const darkIcon = document.querySelector('.dark-mode-icon');
+    
+    function setDarkMode(isDark) {
+        if (isDark) {
+            document.body.classList.add('dark-mode');
+            lightIcon.classList.add('d-none');
+            darkIcon.classList.remove('d-none');
+        } else {
+            document.body.classList.remove('dark-mode');
+            lightIcon.classList.remove('d-none');
+            darkIcon.classList.add('d-none');
+        }
+    }
+    
+    toggleDark.addEventListener('click', () => {
+        const isDarkMode = !document.body.classList.contains('dark-mode');
+        localStorage.setItem('dark-mode', isDarkMode);
+        setDarkMode(isDarkMode);
+    });
+
+    window.addEventListener('DOMContentLoaded', () => {
+        const isDark = localStorage.getItem('dark-mode') === 'true';
+        setDarkMode(isDark);
+    });
 });
-
 
 function loadTasks() {
     const tasksJson = localStorage.getItem('tasks');
@@ -101,77 +150,54 @@ function saveTasks(tasks) {
     localStorage.setItem('tasks', JSON.stringify(tasks));
 }
 
-function renderTasks() {
+function renderTasks(currentFilter) {
     const tasks = loadTasks();
     $tasks.empty();
+    
+    let filteredTasks;
+    if (currentFilter === 'completed') {
+        filteredTasks = tasks.filter(task => task.done);
+    } else if (currentFilter === 'pending') {
+        filteredTasks = tasks.filter(task => !task.done);
+    } else {
+        filteredTasks = tasks;
+    }
 
-    tasks.forEach((task, index) => {
-        /*     const taskHtml = `
-                 <div class="task-card" data-index="${index}">
-                     <div class="task-header">
-                         <span class="task-title">${task.name}</span>
-                         <button class="btn-pen btn-edit" data-index="${index}" data-bs-toggle="modal" data-bs-target="#editModal">
-                             <img src="assets/pen.png" alt="Edit" width="20" height="20">
-                         </button>
-                         <div class="task-status-group">
-                             <span class="task-status ${task.done ? 'done' : 'not-done'}">
-                                 ${task.done ? '✔ Done' : '❌ Not Done'}
-                             </span>
-                         </div>
-                     </div>
-                     <div class="task-body">
-                         <p class="task-description">${task.description}</p>
-                         <p class="task-deadline">Deadline: ${task.deadline}</p>
-                     </div>
-                     <div class="task-actions">
-                         ${!task.done ? '<button type="button" class="btn-done">✔ Mark as done</button>' : ''}
-                         <button type="button" class="btn-delete" data-bs-toggle="modal" data-bs-target="#deleteModal">
-                             <img src="assets/bin.png" width="20" height="20" alt="Delete">
-                         </button>
-                     </div>
-                 </div>
-             `;
-             */
-        const taskHtml = `
-            <div class="list-group-item d-flex justify-content-between align-items-center bg-white text-dark border-secondary mb-2" data-index="${index}">
-                <div class="d-flex align-items-center">
-                    <input class="form-check-input me-3" type="checkbox" ${task.done ? 'checked' : ''} data-index="${index}">
-                <div class="d-flex flex-column">
-                    <span class="task-title">${task.name}</span>
-                    <div class="task-status-group">
-                        <span class="task-status ${task.done ? 'done' : 'not-done'}">
-                            ${task.done ? '✔ Done' : '❌ Not Done'}
-                        </span>
+    if (filteredTasks.length === 0) {
+        $tasks.html('<p class="text-center mt-5">No tasks found.</p>');
+    } else {
+        filteredTasks.forEach(task => {
+            const taskHtml = `
+                <div class="list-group-item d-flex justify-content-between align-items-center bg-white text-dark border-secondary mb-2" data-id="${task.id}">
+                    <div class="d-flex align-items-center">
+                        <input class="form-check-input me-3" type="checkbox" ${task.done ? 'checked' : ''} data-id="${task.id}">
+                        <div class="d-flex flex-column">
+                            <span class="task-title">${task.name}</span>
+                            <div class="task-status-group">
+                                <span class="task-status ${task.done ? 'done' : 'not-done'}">
+                                    ${task.done ? '✔ Completed' : '❌ Pending'}
+                                </span>
+                            </div>
+                            <small class="task-description">${task.description}</small>
+                            <small class="task-deadline">Due: ${task.deadline}</small>
+                        </div>
                     </div>
-                    <small class="task-description">${task.description}</small>
-                    <small class="task-deadline">Due: ${task.deadline}</small>
+                    <div>
+                        <a href="#" class="btn-edit text-dark me-3" data-id="${task.id}" data-bs-toggle="modal" data-bs-target="#editModal">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <a href="#" class="btn-delete text-danger" data-id="${task.id}" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                            <i class="fas fa-trash-alt"></i>
+                        </a>
+                    </div>
                 </div>
-            </div>
-            <div>
-                <a href="#" class="btn-edit text-dark me-3" data-index="${index}" data-bs-toggle="modal" data-bs-target="#editModal">
-                    <i class="fas fa-edit"></i>
-                </a>
-                <a href="#" class="btn-delete text-danger" data-index="${index}" data-bs-toggle="modal" data-bs-target="#deleteModal">
-                    <i class="fas fa-trash-alt"></i>
-                </a>
-            </div>
-        </div>
-        `;
-        $tasks.append(taskHtml);
-    });
+            `;
+            $tasks.append(taskHtml);
+        });
+    }
 }
 
-const toggleDark = document.getElementById('toggleDark');
-
-toggleDark.addEventListener('click', function () {
-    document.body.classList.toggle('dark-mode');
-
-    localStorage.setItem('dark-mode', document.body.classList.contains('dark-mode'));
-});
-
-window.addEventListener('DOMContentLoaded', () => {
-    const isDark = localStorage.getItem('dark-mode') === 'true';
-    if (isDark) {
-        document.body.classList.add('dark-mode');
-    }
-});
+function setActiveFilter(filter) {
+    $('.list-group-item-action').removeClass('active');
+    $(`.list-group-item-action[data-filter="${filter}"]`).addClass('active');
+}

@@ -47,7 +47,7 @@ body {
 
 
 .list-group-item {
-     background-color: #fff;
+    background-color: #fff;
     color: #000;
     margin-bottom: 8px;
     max-width: 600px;
@@ -234,5 +234,8 @@ body.dark-mode .btn-delete {
     color: #fa5252 !important;
 }
 body.dark-mode .btn-darkmode {
+    filter: invert(1) !important;
+}
+body.dark-mode .btn-close {
     filter: invert(1) !important;
 }
