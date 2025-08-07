@@ -21,8 +21,9 @@ $(document).ready(function () {
         const name = $('#name').val().trim();
         const description = $('#description').val().trim();
         const deadline = $('#deadline').val();
+        const time = $('#time').val();
 
-        if (!name || !description || !deadline) {
+        if (!name || !description || !deadline || !time) {
             alert("Please fill in all fields!");
             return;
         }
@@ -33,13 +34,14 @@ $(document).ready(function () {
             name,
             description,
             deadline,
+            time,
             done: false
         };
         tasks.push(newTask);
         saveTasks(tasks);
         renderTasks(currentFilter);
 
-        $('#name, #description, #deadline').val('');
+        $('#name, #description, #deadlinem, #time').val('');
         bootstrap.Modal.getInstance(document.getElementById('addModal')).hide();
     });
 
@@ -53,6 +55,7 @@ $(document).ready(function () {
             $('#new-name').val(taskToEdit.name);
             $('#new-description').val(taskToEdit.description);
             $('#new-deadline').val(taskToEdit.deadline);
+            $('#new-time').val(taskToEdit.time);
         }
     });
 
@@ -61,6 +64,7 @@ $(document).ready(function () {
         const name = $('#new-name').val().trim();
         const description = $('#new-description').val().trim();
         const deadline = $('#new-deadline').val();
+        const time = $('#new-time').val();
 
         const tasks = loadTasks();
         const taskIndex = tasks.findIndex(task => task.id === $editId);
@@ -70,7 +74,8 @@ $(document).ready(function () {
                 ...tasks[taskIndex],
                 name,
                 description,
-                deadline
+                deadline,
+                time
             };
             saveTasks(tasks);
             renderTasks(currentFilter);
@@ -87,7 +92,7 @@ $(document).ready(function () {
         if (taskToUpdate) {
             taskToUpdate.done = this.checked;
             saveTasks(tasks);
-            renderTasks(currentFilter); // A szűrővel frissít
+            renderTasks(currentFilter);
         }
     });
 
@@ -116,7 +121,7 @@ $(document).ready(function () {
     const toggleDark = document.getElementById('toggleDark');
     const lightIcon = document.querySelector('.light-mode-icon');
     const darkIcon = document.querySelector('.dark-mode-icon');
-    
+
     function setDarkMode(isDark) {
         if (isDark) {
             document.body.classList.add('dark-mode');
@@ -128,7 +133,7 @@ $(document).ready(function () {
             darkIcon.classList.add('d-none');
         }
     }
-    
+
     toggleDark.addEventListener('click', () => {
         const isDarkMode = !document.body.classList.contains('dark-mode');
         localStorage.setItem('dark-mode', isDarkMode);
@@ -153,7 +158,7 @@ function saveTasks(tasks) {
 function renderTasks(currentFilter) {
     const tasks = loadTasks();
     $tasks.empty();
-    
+
     let filteredTasks;
     if (currentFilter === 'completed') {
         filteredTasks = tasks.filter(task => task.done);
@@ -168,29 +173,30 @@ function renderTasks(currentFilter) {
     } else {
         filteredTasks.forEach(task => {
             const taskHtml = `
-                <div class="list-group-item d-flex justify-content-between align-items-center bg-white text-dark border-secondary mb-2" data-id="${task.id}">
-                    <div class="d-flex align-items-center">
-                        <input class="form-check-input me-3" type="checkbox" ${task.done ? 'checked' : ''} data-id="${task.id}">
-                        <div class="d-flex flex-column">
-                            <span class="task-title">${task.name}</span>
-                            <div class="task-status-group">
-                                <span class="task-status ${task.done ? 'done' : 'not-done'}">
-                                    ${task.done ? '✔ Completed' : '❌ Pending'}
-                                </span>
+                    <div class="list-group-item d-flex justify-content-between align-items-center bg-white text-dark border-secondary mb-2" data-id="${task.id}">
+                        <div class="d-flex align-items-center">
+                            <input class="form-check-input me-3" type="checkbox" ${task.done ? 'checked' : ''} data-id="${task.id}">
+                            <div class="d-flex flex-column">
+                                <span class="task-title">${task.name}</span>
+                                <small class="task-description">${task.description}</small>
+                                <small class="task-deadline">Due: ${task.deadline} - ${task.time}</small>
                             </div>
-                            <small class="task-description">${task.description}</small>
-                            <small class="task-deadline">Due: ${task.deadline}</small>
+                        </div>
+                        
+                        <div class="d-flex flex-column align-items-center">
+                            <span class="task-status ${task.done ? 'done' : 'not-done'} mb-2">
+                                ${task.done ? '✔ Completed' : '❌ Pending'}
+                            </span>
+                            <div class="d-flex">
+                                <a href="#" class="btn-edit text-dark me-3" data-id="${task.id}" data-bs-toggle="modal" data-bs-target="#editModal">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="#" class="btn-delete text-danger" data-id="${task.id}" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                    <i class="fas fa-trash-alt"></i>
+                                </a>
+                            </div>
                         </div>
                     </div>
-                    <div>
-                        <a href="#" class="btn-edit text-dark me-3" data-id="${task.id}" data-bs-toggle="modal" data-bs-target="#editModal">
-                            <i class="fas fa-edit"></i>
-                        </a>
-                        <a href="#" class="btn-delete text-danger" data-id="${task.id}" data-bs-toggle="modal" data-bs-target="#deleteModal">
-                            <i class="fas fa-trash-alt"></i>
-                        </a>
-                    </div>
-                </div>
             `;
             $tasks.append(taskHtml);
         });

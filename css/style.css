@@ -62,7 +62,7 @@ body {
 }
 
 .list-group-item.active {
-    background-color: #9654b3 !important;
+    background-color: #563464 !important;
     color: #fff !important;
     border-color: #7b1fa2 !important;
 }
@@ -86,18 +86,19 @@ h2.mt-4.mb-4 {
 .task-status.done {
     background-color: #d4edda;
     color: #155724;
-    padding: 4px 10px;
+    padding: 2px 5px;
     border-radius: 12px;
-    font-size: 1.3rem;
+    font-size: 1rem;
     font-weight: bold;
 }
 
 .task-status.not-done {
+    align-items: end;
     background-color: #f8d7da;
     color: #721c24;
-    padding: 4px 10px;
+    padding: 2px 5px;
     border-radius: 12px;
-    font-size: 1.3rem;
+    font-size: 1rem;
     font-weight: bold;
 }
 .btn-edit,
@@ -111,12 +112,18 @@ h2.mt-4.mb-4 {
 }
 
 .btn-add {
-    color: white;
-    background-color: #9654b3;
+    background-color: #563464;
+    color: #fff;
     border-color: #7b1fa2;
     font-size: 1.2rem;
-    transition: background-color 0.2s, border-color 0.2s;
 }
+
+.btn-add:hover {
+    color: #fff;
+    background-color: #492c55;
+    border-color: #60197e;
+}
+
 .form-check-input{
     cursor: pointer;
 }
@@ -125,11 +132,6 @@ h2.mt-4.mb-4 {
     background-color: #83408f;
     border-color: #7b1fa2;
     cursor: pointer;
-}
-
-.btn-add:hover {
-    background-color: #83408f;
-    border-color: #9c27b0;
 }
 
 .btn-success {
@@ -212,7 +214,8 @@ body.dark-mode .list-group-item:hover {
 }
 
 body.dark-mode .list-group-item.active {
-    background-color: #7b1fa2 !important;
+    background-color: #563464 !important;
+    color: #fff !important;
     border-color: #7b1fa2 !important;
 }
 

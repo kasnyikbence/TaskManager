@@ -14,22 +14,6 @@
 </head>
 
 <body>
-    <!--Navbar
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4 py-3 shadow">
-        <div class="container-fluid d-flex justify-content-between align-items center">
-            <h1 class="tasks-header mb-3">Tasks</h1>
-            <button class="task-add" data-bs-toggle="modal" data-bs-target="#addModal"> + Add New Task</button>
-            <form class="d-flex flex-grow-1 mx-4" role="search">
-                <input class="form-control me-5" type="search" placeholder="Search tasks..." aria-label="Search"
-                    id="taskSearch">
-            </form>
-            <button class="btn btn-darkmode ms-2 p-2" id="toggleDark" aria-label="Toggle Dark Mode">
-                <img src="assets/dark-mode.png" alt="Dark Mode" width="40" height="40">
-            </button>
-        </div>
-    </nav>
--->
-
     <div class="d-flex" id="wrapper">
         <div class="bg-white text-dark p-3 d-flex flex-column" id="sidebar-wrapper">
             <div class="sidebar-heading fs-4 fw-bold mb-4">Task Manager
@@ -83,6 +67,10 @@
                         <label for="deadline" class="form-label">Deadline</label>
                         <input type="date" class="form-control" id="deadline">
                     </div>
+                    <div class="mb-3">
+                        <label for="time" class="form-label">Time</label>
+                        <input type="time" class="form-control" id="time">
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-success" id="add">Add</button>
@@ -127,6 +115,10 @@
                     <div class="mb-3">
                         <label for="new-deadline" class="form-label">Deadline</label>
                         <input type="date" class="form-control" id="new-deadline">
+                    </div>
+                    <div class="mb-3">
+                        <label for="new-time" class="form-label">Time</label>
+                        <input type="time" class="form-control" id="new-time">
                     </div>
                 </div>
                 <div class="modal-footer">
